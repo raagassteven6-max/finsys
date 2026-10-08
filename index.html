@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#F4F7FC] text-[#1D1B20] select-none">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinSys VA — Enterprise Financial System & Reconciler (M3)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Roboto & Roboto Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Shoelace Web Components (Core engine for Web Awesome) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/light.css" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/shoelace.js"></script>
+
+  <script src="js/tailwind-config.js"></script>
+
+  <!-- Project styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/files.css">
+</head>
+<body class="h-full flex flex-col font-sans antialiased overflow-x-hidden text-m3-onSurface">
+
+  <!-- TOP HEADER -->
+  <header class="bg-m3-surfaceContainer shadow-sm sticky top-0 z-30">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <div class="flex items-center space-x-4">
+        <!-- DRAWER BURGER BUTTON -->
+        <button onclick="toggleDrawer()" class="p-2 -ml-2 rounded-full text-m3-onSurface hover:bg-m3-onSurface/10 focus:bg-m3-onSurface/10 m3-transition cursor-pointer focus:outline-none" aria-label="Toggle Navigation Drawer">
+          <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" /></svg>
+        </button>
+
+        <!-- BRANDING -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-m3-primaryContainer rounded-xl items-center justify-center hidden sm:flex">
+            <svg class="w-6 h-6" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 12C10 10.8954 10.8954 10 12 10H28C29.1046 10 30 10.8954 30 12V28C30 29.1046 29.1046 30 28 30H12C10.8954 30 10 29.1046 10 28V12Z" fill="#CFE5FF"/>
+              <path d="M14 14H26V18H18V21H24V25H18V28H14V14Z" fill="#00629D"/>
+              <circle cx="26" cy="26" r="4" fill="#001D34"/>
+            </svg>
+          </div>
+          <h1 class="text-xl font-medium tracking-tight text-m3-onSurface flex items-center gap-2">
+            FinSys <span class="font-bold text-m3-primary">VA</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- TOP METRICS & M3 FAB-STYLE ACTIONS -->
+      <div class="hidden lg:flex items-center space-x-6 text-sm font-medium">
+        <div class="flex items-center gap-2 text-m3-onSurfaceVariant bg-m3-surfaceContainerHighest px-3 py-1.5 rounded-lg">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-m3-primary opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-m3-primary"></span>
+          </span>
+          <span>Engine Active</span>
+        </div>
+
+        <button onclick="openModal('upload-modal')" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-6 py-2.5 rounded-full font-medium text-sm transition-colors flex items-center gap-2 cursor-pointer shadow-m3-1 hover:shadow-m3-2">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+          Import Data
+        </button>
+      </div>
+
+      <!-- USER PROFILE -->
+      <div class="flex items-center gap-3 border-l border-m3-surfaceVariant pl-4 ml-2">
+        <div class="hidden sm:block text-right">
+          <div class="text-sm font-medium text-m3-onSurface">Financial Analyst</div>
+          <div class="text-xs text-m3-onSurfaceVariant">ID: FA-9082</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-m3-secondaryContainer flex items-center justify-center text-sm font-bold text-m3-onSecondaryContainer">VA</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- DRAWER SCRIM (OVERLAY) -->
+  <div id="drawer-overlay" class="fixed inset-0 z-40 bg-black/30 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm" onclick="toggleDrawer()"></div>
+
+  <!-- RETRACTABLE DRAWER -->
+  <aside id="engine-drawer" class="fixed inset-y-0 left-0 z-50 w-[320px] bg-m3-surfaceContainerLow rounded-r-3xl shadow-m3-3 transform -translate-x-full m3-transition flex flex-col h-full overflow-hidden">
+    
+    <div class="p-6 pb-4 flex items-center justify-between shrink-0">
+      <h2 class="font-medium text-sm tracking-wide text-m3-primary flex items-center gap-2">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+        System Engines
+      </h2>
+      <button onclick="toggleDrawer()" class="p-2 rounded-full text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 m3-transition cursor-pointer" aria-label="Close Drawer">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto custom-scrollbar px-3 space-y-1 pb-6">
+      
+      <!-- NAV TABS -->
+      <button onclick="handleNavClick(this, 'overview')" id="nav-overview" class="w-full text-left px-4 py-3.5 rounded-full text-sm font-medium flex items-center gap-3 m3-transition cursor-pointer bg-m3-secondaryContainer text-m3-onSecondaryContainer drawer-nav-item">
+        <svg class="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span>Dashboard Overview</span>
+      </button>
+      
+      <button onclick="handleNavClick(this, 'features')" id="nav-features" class="w-full text-left px-4 py-3.5 rounded-full text-sm font-medium flex items-center gap-3 m3-transition cursor-pointer text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 drawer-nav-item">
+        <svg class="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24"><path d="M12 2l-5.5 9h11L12 2zm0 3.84L13.93 9h-3.87L12 5.84zM17.5 13c-2.49 0-4.5 2.01-4.5 4.5s2.01 4.5 4.5 4.5 4.5-2.01 4.5-4.5-2.01-4.5-4.5-4.5zm0 7c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5zM3 21.5h8v-8H3v8zm2-6h4v4H5v-4z"/></svg>
+        <span>FinSys Features</span>
+      </button>
+
+      <button onclick="handleNavClick(this, 'matcher')" id="nav-matcher" class="w-full text-left px-4 py-3.5 rounded-full text-sm font-medium flex items-center gap-3 m3-transition cursor-pointer text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 drawer-nav-item">
+        <svg class="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+        <span>Reconciliation Matcher</span>
+      </button>
+
+      <button onclick="handleNavClick(this, 'resolver')" id="nav-resolver" class="w-full text-left px-4 py-3.5 rounded-full text-sm font-medium flex items-center gap-3 m3-transition cursor-pointer text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 drawer-nav-item">
+        <svg class="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <span>Entity Resolver</span>
+      </button>
+
+      <button onclick="handleNavClick(this, 'duplicates')" id="nav-duplicates" class="w-full text-left px-4 py-3.5 rounded-full text-sm font-medium flex items-center gap-3 m3-transition cursor-pointer text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 drawer-nav-item">
+        <svg class="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        <span>Duplicate Inspector</span>
+      </button>
+
+      <button onclick="handleNavClick(this, 'calculator')" id="nav-calculator" class="w-full text-left px-4 py-3.5 rounded-full text-sm font-medium flex items-center gap-3 m3-transition cursor-pointer text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 drawer-nav-item">
+        <svg class="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm3 12H9v-1c0-1 2-1.9 3-1.9s3 .9 3 1.9v1z"/></svg>
+        <span>Calculator & Math</span>
+      </button>
+
+      <button onclick="handleNavClick(this, 'gapfinder')" id="nav-gapfinder" class="w-full text-left px-4 py-3.5 rounded-full text-sm font-medium flex items-center gap-3 m3-transition cursor-pointer text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 drawer-nav-item">
+        <svg class="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24"><path d="M19.5 3.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2 7.5 3.5 6 2 4.5 3.5 3 2v20l1.5-1.5L6 22l1.5-1.5L9 22l1.5-1.5L12 22l1.5-1.5L15 22l1.5-1.5L18 22l1.5-1.5L21 22V2l-1.5 1.5zM19 19H5V5h14v14zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg>
+        <span>Discrepancy Solver</span>
+      </button>
+
+      <button onclick="handleNavClick(this, 'patcheditor')" id="nav-patcheditor" class="w-full text-left px-4 py-3.5 rounded-full text-sm font-medium flex items-center gap-3 m3-transition cursor-pointer text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 drawer-nav-item">
+        <svg class="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        <span>Excel Patch Editor</span>
+      </button>
+
+      <button onclick="handleNavClick(this, 'files')" id="nav-files" class="w-full text-left px-4 py-3.5 rounded-full text-sm font-medium flex items-center gap-3 m3-transition cursor-pointer text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 drawer-nav-item">
+        <svg class="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+        <span>File Manager</span>
+      </button>
+
+      <hr class="border-m3-surfaceVariant my-4 mx-2">
+
+      <!-- SYSTEM SUMMARY INFOCARD -->
+      <div class="bg-m3-surfaceContainerHigh rounded-3xl p-5 mx-2 mt-2">
+        <div class="text-xs font-bold text-m3-onSurfaceVariant uppercase tracking-wider flex items-center justify-between mb-4">
+          <span>Audit Status</span>
+          <span class="w-2 h-2 rounded-full bg-green-600"></span>
+        </div>
+
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between items-center text-m3-onSurface">
+            <span>Runs Logged</span>
+            <span class="font-mono font-bold text-m3-primary bg-m3-primaryContainer px-2 py-0.5 rounded-full text-xs">48</span>
+          </div>
+          <div class="flex justify-between items-center text-m3-onSurface">
+            <span>Pending Patches</span>
+            <span class="font-mono font-bold text-m3-tertiary bg-m3-tertiaryContainer px-2 py-0.5 rounded-full text-xs">2</span>
+          </div>
+        </div>
+
+        <button onclick="openModal('audit-modal')" class="w-full mt-5 bg-m3-surface hover:bg-m3-surfaceVariant text-m3-primary border border-m3-outline rounded-full py-2 text-sm font-medium m3-transition cursor-pointer shadow-sm">
+          View Audit Log
+        </button>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- MAIN TABBED WORKSPACE WRAPPER -->
+  <main class="flex-1 w-full mx-auto max-w-screen-2xl flex flex-col relative h-full">
+    
+    <sl-tab-group id="main-tab-group" class="w-full h-full flex flex-col">
+      
+      <!-- PERMANENT OVERVIEW TAB -->
+      <sl-tab slot="nav" panel="overview" active>
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          <span class="whitespace-nowrap">Dashboard Overview</span>
+        </div>
+      </sl-tab>
+
+      <!-- =================================================================== -->
+      <!-- PANEL 1: DASHBOARD OVERVIEW -->
+      <!-- =================================================================== -->
+      <sl-tab-panel name="overview">
+        <div class="p-4 sm:p-6 lg:p-8 space-y-6 animate-fade-up">
+          
+          <div class="bg-m3-primaryContainer rounded-3xl p-6 sm:p-8 shadow-sm">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div class="space-y-2 max-w-2xl">
+                <div class="inline-block bg-m3-primary text-m3-onPrimary font-mono text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  System Active
+                </div>
+                <h2 class="text-3xl font-normal text-m3-onPrimaryContainer tracking-tight">Financial Command Center</h2>
+                <p class="text-m3-onPrimaryContainer/80 text-sm leading-relaxed max-w-xl">
+                  Reconcile invoices, detect duplicate ledger entries, resolve fuzzy party names, and solve discrepancy gaps utilizing exact integer math models.
+                </p>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-3">
+                <button onclick="runAllQuickChecks()" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-6 py-3 rounded-full text-sm font-medium flex items-center gap-2 m3-transition shadow-m3-1 hover:shadow-m3-2 cursor-pointer">
+                  <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/><path d="M19 4.2l-3.8 3.8-3.2-3.2-6 6 1.4 1.4 4.6-4.6 3.2 3.2 5.2-5.2z"/></svg>
+                  Run Health Diagnostic
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-m3-surface rounded-3xl p-5 border border-m3-surfaceVariant shadow-sm flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-m3-onSurfaceVariant">Total Reconciled</span>
+                <div class="w-10 h-10 rounded-full bg-m3-secondaryContainer flex items-center justify-center">
+                  <svg class="w-5 h-5 fill-m3-onSecondaryContainer" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                </div>
+              </div>
+              <div>
+                <div class="text-3xl font-mono font-medium text-m3-onSurface" id="kpi-reconciled">$1,428,950</div>
+                <div class="text-xs text-green-700 font-medium mt-1 flex items-center gap-1 bg-green-100 w-max px-2 py-0.5 rounded-full">✓ 98.4% Match Rate</div>
+              </div>
+            </div>
+            <div class="bg-m3-surface rounded-3xl p-5 border border-m3-surfaceVariant shadow-sm flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-m3-onSurfaceVariant">Discrepancy Gap</span>
+                <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+                  <svg class="w-5 h-5 fill-yellow-700" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                </div>
+              </div>
+              <div>
+                <div class="text-3xl font-mono font-medium text-m3-onSurface" id="kpi-gap">$1,250.00</div>
+                <div class="text-xs text-yellow-700 font-medium mt-1 flex items-center gap-1 bg-yellow-100 w-max px-2 py-0.5 rounded-full">⚠️ 2 Candidates</div>
+              </div>
+            </div>
+            <div class="bg-m3-surface rounded-3xl p-5 border border-m3-surfaceVariant shadow-sm flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-m3-onSurfaceVariant">Duplicates Caught</span>
+                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                  <svg class="w-5 h-5 fill-red-700" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                </div>
+              </div>
+              <div>
+                <div class="text-3xl font-mono font-medium text-m3-onSurface" id="kpi-duplicates">1 Cluster</div>
+                <div class="text-xs text-red-700 font-medium mt-1 flex items-center gap-1 bg-red-100 w-max px-2 py-0.5 rounded-full">🚨 $1,250.00 Saved</div>
+              </div>
+            </div>
+            <div class="bg-m3-surface rounded-3xl p-5 border border-m3-surfaceVariant shadow-sm flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-m3-onSurfaceVariant">Unresolved Parties</span>
+                <div class="w-10 h-10 rounded-full bg-m3-tertiaryContainer flex items-center justify-center">
+                  <svg class="w-5 h-5 fill-m3-onTertiaryContainer" viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+                </div>
+              </div>
+              <div>
+                <div class="text-3xl font-mono font-medium text-m3-onSurface" id="kpi-parties">0 Ambiguous</div>
+                <div class="text-xs text-m3-tertiary font-medium mt-1 flex items-center gap-1 bg-m3-tertiaryContainer w-max px-2 py-0.5 rounded-full">✓ All Resolved</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-m3-surface rounded-3xl shadow-sm border border-m3-surfaceVariant overflow-hidden">
+            <div class="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-m3-surfaceVariant bg-m3-surfaceContainerLowest">
+              <div>
+                <h3 class="font-medium text-lg text-m3-onSurface">Ledger Reconciliation Batches</h3>
+                <p class="text-sm text-m3-onSurfaceVariant mt-1">Live preview of synchronized bank ledgers</p>
+              </div>
+              <div>
+                <input type="text" id="overview-search" onkeyup="filterOverviewTable()" placeholder="Search batch, client..." class="m3-input text-sm w-full sm:w-64 rounded-full px-5 py-2.5">
+              </div>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-m3-surfaceContainerLow text-m3-onSurfaceVariant font-medium">
+                    <th class="p-4 pl-6 font-normal">Record Address</th>
+                    <th class="p-4 font-normal">Document Source</th>
+                    <th class="p-4 font-normal">Invoice #</th>
+                    <th class="p-4 font-normal">Client / Vendor</th>
+                    <th class="p-4 font-normal">Date</th>
+                    <th class="p-4 text-right font-normal">Amount</th>
+                    <th class="p-4 pr-6 text-center font-normal">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="overview-table-body" class="bg-m3-surface">
+                  <!-- Rows injected dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </sl-tab-panel>
+
+      <!-- =================================================================== -->
+      <!-- ALL OTHER ENGINE VIEWS (Pre-rendered in DOM, Activated via Tabs) -->
+      <!-- =================================================================== -->
+      
+      <sl-tab-panel name="features">
+        <div class="p-4 sm:p-6 lg:p-8 space-y-16 py-12 md:py-16 animate-fade-up">
+          <div class="mx-auto w-full max-w-5xl space-y-12">
+            
+            <div class="mx-auto max-w-3xl text-center space-y-4">
+              <h2 class="text-3xl font-medium tracking-tight text-balance md:text-4xl lg:text-5xl text-m3-onSurface">
+                Precision. Automation. Resolution.
+              </h2>
+              <p class="text-m3-onSurfaceVariant text-sm md:text-base leading-relaxed tracking-wide text-balance max-w-2xl mx-auto">
+                Discover the dedicated deterministic engines crafted to streamline financial reconciliation and permanently eliminate accounting headaches.
+              </p>
+            </div>
+
+            <!-- Dashed Feature Grid -->
+            <div class="grid grid-cols-1 divide-x divide-y divide-dashed border border-dashed border-m3-outline/40 sm:grid-cols-2 md:grid-cols-3 bg-m3-surfaceContainerLowest shadow-sm rounded-3xl overflow-hidden">
+              <!-- Grid Items -->
+              <div class="relative overflow-hidden p-8 group">
+                <div class="pointer-events-none absolute top-0 left-1/2 -mt-2 -ml-20 h-full w-full feature-grid-bg z-0 transition-opacity opacity-50 group-hover:opacity-100">
+                  <div class="absolute inset-0 bg-gradient-to-r from-m3-primary/10 to-transparent">
+                    <svg aria-hidden="true" width="100%" height="100%" class="fill-m3-primary/5 stroke-m3-primary/20 absolute inset-0 mix-blend-overlay"><defs><pattern id="g-p1" width="20" height="20" patternUnits="userSpaceOnUse" x="-12" y="4"><path d="M.5 20V.5H20" fill="none" /></pattern></defs><rect width="100%" height="100%" stroke-width="0" fill="url(#g-p1)" /><svg x="-12" y="4" class="overflow-visible"><rect stroke-width="0" width="21" height="21" x="40" y="20"></rect><rect stroke-width="0" width="21" height="21" x="80" y="60"></rect></svg></svg>
+                  </div>
+                </div>
+                <svg class="text-m3-primary w-7 h-7 relative z-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <h3 class="mt-8 text-base font-medium text-m3-onSurface relative z-10">Multi-Tier Matcher</h3>
+                <p class="text-m3-onSurfaceVariant relative z-10 mt-2 text-xs font-light leading-relaxed">Automates the tedious line-by-line comparison of invoices to ledgers, matching exact pairs and flagging tolerances.</p>
+              </div>
+
+              <div class="relative overflow-hidden p-8 group">
+                <div class="pointer-events-none absolute top-0 left-1/2 -mt-2 -ml-20 h-full w-full feature-grid-bg z-0 transition-opacity opacity-50 group-hover:opacity-100">
+                  <div class="absolute inset-0 bg-gradient-to-r from-m3-tertiary/10 to-transparent">
+                    <svg aria-hidden="true" width="100%" height="100%" class="fill-m3-tertiary/5 stroke-m3-tertiary/20 absolute inset-0 mix-blend-overlay"><rect width="100%" height="100%" stroke-width="0" fill="url(#g-p1)" /><svg x="-12" y="4" class="overflow-visible"><rect stroke-width="0" width="21" height="21" x="20" y="80"></rect></svg></svg>
+                  </div>
+                </div>
+                <svg class="text-m3-tertiary w-7 h-7 relative z-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path></svg>
+                <h3 class="mt-8 text-base font-medium text-m3-onSurface relative z-10">Entity Resolver</h3>
+                <p class="text-m3-onSurfaceVariant relative z-10 mt-2 text-xs font-light leading-relaxed">Resolves messy "Acme Corp" variations into canonical master records using robust disambiguation algorithms.</p>
+              </div>
+
+              <div class="relative overflow-hidden p-8 group">
+                <div class="pointer-events-none absolute top-0 left-1/2 -mt-2 -ml-20 h-full w-full feature-grid-bg z-0 transition-opacity opacity-50 group-hover:opacity-100">
+                  <div class="absolute inset-0 bg-gradient-to-r from-m3-error/10 to-transparent">
+                    <svg aria-hidden="true" width="100%" height="100%" class="fill-m3-error/5 stroke-m3-error/20 absolute inset-0 mix-blend-overlay"><rect width="100%" height="100%" stroke-width="0" fill="url(#g-p1)" /><svg x="-12" y="4" class="overflow-visible"><rect stroke-width="0" width="21" height="21" x="120" y="40"></rect></svg></svg>
+                  </div>
+                </div>
+                <svg class="text-m3-error w-7 h-7 relative z-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <h3 class="mt-8 text-base font-medium text-m3-onSurface relative z-10">Duplicate Inspector</h3>
+                <p class="text-m3-onSurfaceVariant relative z-10 mt-2 text-xs font-light leading-relaxed">Actively clusters and identifies double-payments before they drain cash flow, providing safe discard recommendations.</p>
+              </div>
+
+              <div class="relative overflow-hidden p-8 group">
+                <div class="pointer-events-none absolute top-0 left-1/2 -mt-2 -ml-20 h-full w-full feature-grid-bg z-0 transition-opacity opacity-50 group-hover:opacity-100">
+                  <div class="absolute inset-0 bg-gradient-to-r from-m3-primary/10 to-transparent">
+                    <svg aria-hidden="true" width="100%" height="100%" class="fill-m3-primary/5 stroke-m3-primary/20 absolute inset-0 mix-blend-overlay"><rect width="100%" height="100%" stroke-width="0" fill="url(#g-p1)" /><svg x="-12" y="4" class="overflow-visible"><rect stroke-width="0" width="21" height="21" x="60" y="100"></rect></svg></svg>
+                  </div>
+                </div>
+                <svg class="text-m3-primary w-7 h-7 relative z-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                <h3 class="mt-8 text-base font-medium text-m3-onSurface relative z-10">Precision Calculator</h3>
+                <p class="text-m3-onSurfaceVariant relative z-10 mt-2 text-xs font-light leading-relaxed">Built entirely on integer-cents architecture to guarantee zero floating-point rounding errors on aggregations.</p>
+              </div>
+
+              <div class="relative overflow-hidden p-8 group">
+                <div class="pointer-events-none absolute top-0 left-1/2 -mt-2 -ml-20 h-full w-full feature-grid-bg z-0 transition-opacity opacity-50 group-hover:opacity-100">
+                  <div class="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-transparent">
+                    <svg aria-hidden="true" width="100%" height="100%" class="fill-yellow-500/5 stroke-yellow-500/20 absolute inset-0 mix-blend-overlay"><rect width="100%" height="100%" stroke-width="0" fill="url(#g-p1)" /><svg x="-12" y="4" class="overflow-visible"><rect stroke-width="0" width="21" height="21" x="140" y="20"></rect></svg></svg>
+                  </div>
+                </div>
+                <svg class="text-yellow-600 w-7 h-7 relative z-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"></path></svg>
+                <h3 class="mt-8 text-base font-medium text-m3-onSurface relative z-10">Discrepancy Solver</h3>
+                <p class="text-m3-onSurfaceVariant relative z-10 mt-2 text-xs font-light leading-relaxed">Solves the "needle in a haystack" by finding precise combinations of transactions that equal unexplained gaps.</p>
+              </div>
+
+              <div class="relative overflow-hidden p-8 group">
+                <div class="pointer-events-none absolute top-0 left-1/2 -mt-2 -ml-20 h-full w-full feature-grid-bg z-0 transition-opacity opacity-50 group-hover:opacity-100">
+                  <div class="absolute inset-0 bg-gradient-to-r from-green-500/10 to-transparent">
+                    <svg aria-hidden="true" width="100%" height="100%" class="fill-green-500/5 stroke-green-500/20 absolute inset-0 mix-blend-overlay"><rect width="100%" height="100%" stroke-width="0" fill="url(#g-p1)" /><svg x="-12" y="4" class="overflow-visible"><rect stroke-width="0" width="21" height="21" x="20" y="40"></rect></svg></svg>
+                  </div>
+                </div>
+                <svg class="text-green-600 w-7 h-7 relative z-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path></svg>
+                <h3 class="mt-8 text-base font-medium text-m3-onSurface relative z-10">Safe Patch Editor</h3>
+                <p class="text-m3-onSurfaceVariant relative z-10 mt-2 text-xs font-light leading-relaxed">Fix transpose errors without corrupting the master file. Securely stage cell changes to a new patched workbook.</p>
+              </div>
+            </div>
+
+            <!-- Blog Section -->
+            <div class="max-w-3xl mx-auto space-y-6 pt-10 border-t border-m3-outline/20">
+              <h3 class="text-2xl font-medium text-m3-onSurface tracking-tight">The Architecture of Certainty</h3>
+              <div class="space-y-4 text-m3-onSurfaceVariant leading-relaxed text-[15px]">
+                <p>Accounting and reconciliation shouldn't feel like a high-stakes treasure hunt. For years, financial analysts have battled with messy spreadsheets, spending countless hours ticking and tying ledger entries against vendor invoices. The pain points are universal: hunting down a $12.50 discrepancy caused by a missing receipt, dealing with fifty different variations of "Acme Corp" in the database, or the sheer terror of realizing a floating-point rounding error threw off the quarterly balance by a single penny.</p>
+                
+                <p>FinSys VA was engineered to eliminate these exact headaches. Our <strong class="text-m3-primary font-medium">Multi-Tier Matcher</strong> completely automates the tedious line-by-line comparison, catching exact matches immediately while applying intelligent logic to catch the edge cases. When vendor names are an inconsistent mess across different departments, the <strong class="text-m3-tertiary font-medium">Entity Resolver</strong> acts as a Rosetta Stone, instantly normalizing names so nothing slips through the cracks.</p>
+                
+                <p>But we didn't stop at just making things faster; we built safeguards. The <strong class="text-m3-error font-medium">Duplicate Inspector</strong> actively hunts for double-payments before they impact cash flow, while our <strong class="text-m3-primary font-medium">Precision Calculator</strong> relies on a strict integer-cents architecture to guarantee zero floating-point errors. Finally, for those agonizing moments when you have an unexplained gap at the end of the month, the <strong class="text-yellow-700 font-medium">Discrepancy Solver</strong> uses advanced subset-sum algorithms to instantly highlight the exact combination of missing transactions. And when you finally need to make a correction, the <strong class="text-green-700 font-medium">Safe Patch Editor</strong> ensures your original files remain untouched and secure. It's not just automation; it's absolute deterministic control.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sl-tab-panel>
+
+      <sl-tab-panel name="matcher">
+        <div class="p-4 sm:p-6 lg:p-8 animate-fade-up h-full">
+          <div class="bg-m3-surface rounded-3xl shadow-sm border border-m3-surfaceVariant p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-4 border-b border-m3-surfaceVariant pb-4">
+              <div class="w-12 h-12 rounded-full bg-m3-secondaryContainer flex items-center justify-center">
+                <svg class="w-6 h-6 fill-m3-primary" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12C8 9.79 9.79 8 12 8V6L15 9L12 12V10C10.89 10 10 10.89 10 12H8Z" fill="currentColor"/><path d="M16 12C16 14.2 14.2 16 12 16V18L9 15L12 12V14C13.1 14 14 13.1 14 12H16Z" fill="currentColor"/></svg>
+              </div>
+              <div>
+                <h2 class="text-xl font-medium text-m3-onSurface">Multi-Tier Reconciliation Matcher</h2>
+                <p class="text-sm text-m3-onSurfaceVariant mt-1">Multi-wave matching: Tier 1 (Exact), Tier 2 (Tolerance window), and Tier 3 (Fuzzy Logic).</p>
+              </div>
+            </div>
+
+            <div class="bg-m3-surfaceContainerLow rounded-2xl p-6 space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Tolerance ($)</label><input type="text" id="match-input-tol" value="0.00" class="m3-input w-full font-mono text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Date Window (Days)</label><input type="number" id="match-input-window" value="7" class="m3-input w-full font-mono text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Similarity Threshold</label><input type="number" id="match-input-thresh" value="80" min="50" max="100" class="m3-input w-full font-mono text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Client Filter</label><input type="text" id="match-input-filter" value="" placeholder="Optional party name..." class="m3-input w-full text-sm"></div>
+              </div>
+              <div class="flex items-center gap-3 pt-2">
+                <button onclick="runMatchEngine()" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-6 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 m3-transition shadow-sm cursor-pointer">Execute Match Engine</button>
+              </div>
+            </div>
+            <div id="out-matcher-results" class="space-y-4"></div>
+          </div>
+        </div>
+      </sl-tab-panel>
+
+      <sl-tab-panel name="resolver">
+         <div class="p-4 sm:p-6 lg:p-8 animate-fade-up h-full">
+          <div class="bg-m3-surface rounded-3xl shadow-sm border border-m3-surfaceVariant p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-4 border-b border-m3-surfaceVariant pb-4">
+              <div class="w-12 h-12 rounded-full bg-m3-tertiaryContainer flex items-center justify-center">
+                <svg class="w-6 h-6 fill-m3-tertiary" viewBox="0 0 24 24"><path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11" cy="13" r="3" fill="currentColor"/><path d="M13.5 15.5L16 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </div>
+              <div>
+                <h2 class="text-xl font-medium text-m3-onSurface">Dynamic Entity Resolver</h2>
+                <p class="text-sm text-m3-onSurfaceVariant mt-1">Disambiguate guest/vendor name variations across the entire financial corpus.</p>
+              </div>
+            </div>
+
+            <div class="bg-m3-surfaceContainerLow rounded-2xl p-6 space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Global Query</label><input type="text" id="resolver-q" value="Acme" placeholder="e.g. Acme..." class="m3-input w-full text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Phone Filter</label><input type="text" id="resolver-phone" placeholder="e.g. 555-0199" class="m3-input w-full text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Address Filter</label><input type="text" id="resolver-address" placeholder="e.g. Industrial Way" class="m3-input w-full text-sm"></div>
+              </div>
+              <div class="flex items-center gap-3 pt-2">
+                <button onclick="runEntityResolver()" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-6 py-2.5 rounded-full text-sm font-medium m3-transition shadow-sm cursor-pointer">Search Entities</button>
+                <button onclick="clearEntityResolverInputs()" class="bg-transparent border border-m3-outline hover:bg-m3-surfaceVariant/50 text-m3-onSurface px-6 py-2.5 rounded-full text-sm font-medium m3-transition cursor-pointer">Clear Form</button>
+              </div>
+            </div>
+            <div id="out-resolver-results" class="space-y-4"></div>
+          </div>
+        </div>
+      </sl-tab-panel>
+
+      <sl-tab-panel name="duplicates">
+        <div class="p-4 sm:p-6 lg:p-8 animate-fade-up h-full">
+          <div class="bg-m3-surface rounded-3xl shadow-sm border border-m3-surfaceVariant p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-4 border-b border-m3-surfaceVariant pb-4">
+               <div class="w-12 h-12 rounded-full bg-m3-errorContainer flex items-center justify-center">
+                <svg class="w-6 h-6 fill-m3-error" viewBox="0 0 24 24"><path d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8C6.9 5 6 5.9 6 7v14C6 22.1 6.9 23 8 23h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+              </div>
+              <div>
+                <h2 class="text-xl font-medium text-m3-onSurface">Duplicate Record Inspector</h2>
+                <p class="text-sm text-m3-onSurfaceVariant mt-1">Scan files for double payments and select the optimal keep record.</p>
+              </div>
+            </div>
+
+            <div class="bg-m3-surfaceContainerLow rounded-2xl p-6 space-y-5">
+              <div class="max-w-xs"><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Similarity Threshold %</label><input type="number" id="dup-thresh" value="85" min="50" max="100" class="m3-input w-full font-mono text-sm"></div>
+              <button onclick="runDuplicateScan()" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-6 py-2.5 rounded-full text-sm font-medium m3-transition shadow-sm cursor-pointer">Execute Duplicate Scan</button>
+            </div>
+            <div id="out-dup-results" class="space-y-4"></div>
+          </div>
+        </div>
+      </sl-tab-panel>
+
+      <sl-tab-panel name="calculator">
+        <div class="p-4 sm:p-6 lg:p-8 animate-fade-up h-full">
+          <div class="bg-m3-surface rounded-3xl shadow-sm border border-m3-surfaceVariant p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-4 border-b border-m3-surfaceVariant pb-4">
+               <div class="w-12 h-12 rounded-full bg-m3-primaryContainer flex items-center justify-center">
+                <svg class="w-6 h-6 fill-m3-primary" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="9" y="6" width="6" height="3" fill="currentColor"/><circle cx="9" cy="13" r="1.5" fill="currentColor"/><circle cx="15" cy="13" r="1.5" fill="currentColor"/><circle cx="9" cy="17" r="1.5" fill="currentColor"/><circle cx="15" cy="17" r="1.5" fill="currentColor"/></svg>
+              </div>
+              <div>
+                <h2 class="text-xl font-medium text-m3-onSurface">Penny-Precision Calculator</h2>
+                <p class="text-sm text-m3-onSurfaceVariant mt-1">Aggregations utilizing zero-float integer cents processing.</p>
+              </div>
+            </div>
+            <div class="bg-m3-surfaceContainerLow rounded-2xl p-6 space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Operation</label><select id="calc-op" class="m3-input w-full font-mono text-sm bg-white cursor-pointer"><option value="sum" selected>sum — Total</option><option value="count">count — Record Count</option><option value="average">avg — Average</option></select></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Group-By</label><input type="text" id="calc-group-field" value="client" class="m3-input w-full font-mono text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Currency</label><input type="text" id="calc-curr" value="USD" class="m3-input w-full font-mono text-sm uppercase"></div>
+              </div>
+              <button onclick="runCalculatorEngine()" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-6 py-2.5 rounded-full text-sm font-medium m3-transition shadow-sm cursor-pointer">Calculate Metrics</button>
+            </div>
+            <div id="out-calc-results" class="space-y-4"></div>
+          </div>
+        </div>
+      </sl-tab-panel>
+
+      <sl-tab-panel name="gapfinder">
+        <div class="p-4 sm:p-6 lg:p-8 animate-fade-up h-full">
+          <div class="bg-m3-surface rounded-3xl shadow-sm border border-m3-surfaceVariant p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-4 border-b border-m3-surfaceVariant pb-4">
+               <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
+                <svg class="w-6 h-6 fill-yellow-700" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 7L10 10M17 7L14 10M7 17L10 14M17 17L14 14" stroke="currentColor" stroke-width="2"/></svg>
+              </div>
+              <div>
+                <h2 class="text-xl font-medium text-m3-onSurface">Discrepancy Subset Solver</h2>
+                <p class="text-sm text-m3-onSurfaceVariant mt-1">Find subset sums of transactions matching unexplained gaps.</p>
+              </div>
+            </div>
+
+            <!-- ADDED: Image Holder inside Gap Finder as requested -->
+            <div class="w-full h-48 md:h-64 rounded-2xl overflow-hidden relative shadow-inner">
+              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200" alt="Financial Analysis Grid" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-6">
+                <span class="text-white font-medium text-lg drop-shadow-md">Precision Subset Mathematics</span>
+                <span class="text-white/80 text-sm mt-1">Eliminating manual ledger hunting through bounded combination algorithms.</span>
+              </div>
+            </div>
+
+            <div class="bg-m3-surfaceContainerLow rounded-2xl p-6 space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Target Gap</label><input type="text" id="gap-target" value="1,250.00" class="m3-input w-full font-mono text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Tolerance</label><input type="text" id="gap-tol" value="0.00" class="m3-input w-full font-mono text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Max Items</label><input type="number" id="gap-maxk" value="4" class="m3-input w-full font-mono text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Max Sols</label><input type="number" id="gap-maxsols" value="10" class="m3-input w-full font-mono text-sm"></div>
+              </div>
+              <button onclick="runGapFinderEngine()" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-6 py-2.5 rounded-full text-sm font-medium m3-transition shadow-sm cursor-pointer">Run Solver</button>
+            </div>
+            <div id="out-gap-results" class="space-y-4"></div>
+          </div>
+        </div>
+      </sl-tab-panel>
+
+      <sl-tab-panel name="patcheditor">
+        <div class="p-4 sm:p-6 lg:p-8 animate-fade-up h-full">
+          <div class="bg-m3-surface rounded-3xl shadow-sm border border-m3-surfaceVariant p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-4 border-b border-m3-surfaceVariant pb-4">
+               <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                <svg class="w-6 h-6 fill-green-700" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+              </div>
+              <div>
+                <h2 class="text-xl font-medium text-m3-onSurface">Safe Excel Patch Queue</h2>
+                <p class="text-sm text-m3-onSurfaceVariant mt-1">Stage and preview structural cell writes.</p>
+              </div>
+            </div>
+
+            <div class="bg-m3-surfaceContainerLow rounded-2xl p-6 space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Sheet Name</label><input type="text" id="patch-sheet" value="Ledger_2026" class="m3-input w-full font-mono text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Cell Ref</label><input type="text" id="patch-cell" value="D2" class="m3-input w-full font-mono text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Old Value</label><input type="text" id="patch-old" value="$1,250.00" class="m3-input w-full font-mono text-sm"></div>
+                <div><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">New Value</label><input type="text" id="patch-new" value="$1,500.00" class="m3-input w-full font-mono text-sm"></div>
+                <div class="sm:col-span-2"><label class="block text-sm font-medium text-m3-onSurfaceVariant mb-1.5">Reason</label><input type="text" id="patch-reason" value="Transposition fix" class="m3-input w-full text-sm"></div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-3 pt-2">
+                <button onclick="addPatchProposal()" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-6 py-2.5 rounded-full text-sm font-medium m3-transition shadow-sm cursor-pointer">+ Enqueue Edit</button>
+                <button onclick="clearPatchQueue()" class="bg-transparent border border-m3-outline hover:bg-m3-surfaceVariant/50 text-m3-onSurface px-6 py-2.5 rounded-full text-sm font-medium m3-transition cursor-pointer">Clear Queue</button>
+                <button onclick="executeApplyPatch()" class="bg-green-700 hover:bg-green-800 text-white px-6 py-2.5 rounded-full text-sm font-medium m3-transition shadow-sm cursor-pointer">💾 Write Changes to File</button>
+              </div>
+            </div>
+            <div id="out-patch-results" class="space-y-4"></div>
+          </div>
+        </div>
+      </sl-tab-panel>
+
+      <!-- =================================================================== -->
+      <!-- PANEL: FILE MANAGER (upload / download / selectable table) -->
+      <!-- =================================================================== -->
+      <sl-tab-panel name="files">
+        <div class="p-4 sm:p-6 lg:p-8 animate-fade-up h-full">
+          <div class="bg-m3-surface rounded-3xl shadow-sm border border-m3-surfaceVariant overflow-hidden">
+            <div class="px-6 pt-6 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h2 class="text-lg font-medium text-m3-onSurface">Files uploaded</h2>
+              <div class="flex items-center gap-3">
+                <button id="files-download-all" type="button" class="bg-transparent border border-m3-outline hover:bg-m3-surfaceVariant/50 text-m3-onSurface px-5 py-2 rounded-full text-sm font-medium m3-transition cursor-pointer">Download all</button>
+                <button id="files-upload-btn" type="button" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-5 py-2 rounded-full text-sm font-medium m3-transition shadow-m3-1 hover:shadow-m3-2 flex items-center gap-2 cursor-pointer">
+                  <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+                  Upload
+                </button>
+                <input id="files-input" type="file" multiple accept=".xlsx,.csv,.json,.pdf" class="hidden">
+              </div>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="w-full text-left border-collapse text-sm" aria-label="Uploaded files">
+                <thead>
+                  <tr class="bg-m3-surfaceContainerLow text-m3-onSurfaceVariant font-medium">
+                    <th class="p-4 pl-6 w-10"><input type="checkbox" id="files-select-all" class="files-check" aria-label="Select all files"></th>
+                    <th class="p-4 font-normal">File name</th>
+                    <th class="p-4 font-normal">File size</th>
+                    <th class="p-4 font-normal">Date uploaded</th>
+                    <th class="p-4 font-normal md:hidden xl:table-cell">Last updated</th>
+                    <th class="p-4 font-normal">Uploaded by</th>
+                    <th class="p-4 pr-4 w-12"><span class="sr-only">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody id="files-table-body" class="bg-m3-surface"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </sl-tab-panel>
+
+    </sl-tab-group>
+  </main>
+
+  <!-- MODALS -->
+  <div id="upload-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 m3-transition">
+    <div class="bg-m3-surface rounded-3xl max-w-xl w-full p-6 shadow-m3-3 relative">
+      <div class="flex items-center justify-between border-b border-m3-surfaceVariant pb-4 mb-6">
+        <h3 class="text-xl font-medium text-m3-onSurface">Import Financial Documents</h3>
+        <button onclick="closeModal('upload-modal')" class="p-2 rounded-full text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 m3-transition cursor-pointer">✕</button>
+      </div>
+      <div class="border-2 border-dashed border-m3-outline bg-m3-surfaceContainerLow p-10 text-center space-y-3 rounded-2xl cursor-pointer hover:bg-m3-surfaceContainer m3-transition" onclick="simulateFileUpload()">
+        <svg class="w-12 h-12 fill-m3-primary mx-auto" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+        <div class="text-base font-medium text-m3-onSurface">Click or Drag Files Here</div>
+        <div class="text-xs text-m3-onSurfaceVariant font-mono">.XLSX, .CSV, .JSON, .PDF Supported</div>
+      </div>
+      <div id="upload-status-msg" class="hidden mt-4 p-4 bg-green-100 text-green-900 rounded-xl text-sm font-medium"></div>
+      <div class="flex justify-end gap-3 mt-8">
+        <button onclick="closeModal('upload-modal')" class="bg-m3-surfaceContainerHigh hover:bg-m3-surfaceContainerHighest text-m3-onSurface px-6 py-2.5 rounded-full text-sm font-medium cursor-pointer m3-transition">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="audit-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 m3-transition">
+    <div class="bg-m3-surface rounded-3xl max-w-2xl w-full p-6 shadow-m3-3 relative">
+      <div class="flex items-center justify-between border-b border-m3-surfaceVariant pb-4 mb-6">
+        <h3 class="text-xl font-medium text-m3-onSurface">System Audit Trail</h3>
+        <button onclick="closeModal('audit-modal')" class="p-2 rounded-full text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 m3-transition cursor-pointer">✕</button>
+      </div>
+      <div class="space-y-3 text-sm font-mono max-h-80 overflow-y-auto custom-scrollbar p-4 bg-m3-surfaceContainerLow rounded-2xl text-m3-onSurfaceVariant">
+        <div class="flex justify-between border-b border-m3-surfaceVariant pb-2"><span class="text-m3-primary font-bold">run_001.json — CalculateEngine</span><span>04:12:00</span></div>
+        <div class="flex justify-between border-b border-m3-surfaceVariant pb-2"><span class="text-m3-primary font-bold">run_002.json — MatchEngine</span><span>04:15:22</span></div>
+        <div class="flex justify-between"><span class="text-green-700 font-bold">undo_bank_ledger.json — ExcelPatch</span><span>04:30:00</span></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-8">
+        <button onclick="closeModal('audit-modal')" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-6 py-2.5 rounded-full text-sm font-medium cursor-pointer m3-transition shadow-sm">Close Audit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts (order matters: state -> ui -> engines -> files -> main) -->
+  <script src="data/uploaded-files.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/engines.js"></script>
+  <script src="js/files.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
