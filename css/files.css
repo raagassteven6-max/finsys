@@ -1,0 +1,4 @@
+/* File Manager — small additions that Tailwind utilities don't cover */
+.files-check { accent-color: #00629D; width: 16px; height: 16px; cursor: pointer; }
+#files-table-body tr[data-selected="true"] { background-color: rgba(207, 229, 255, 0.45); }
+#files-table-body sl-icon-button { color: #43474E; }
