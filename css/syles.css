@@ -1,0 +1,75 @@
+/* FinSys VA — global styles (extracted unchanged from the original dashboard) */
+body {
+  background-color: #F4F7FC; /* surface container low */
+}
+
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #C4C7C5; border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #8E918F; }
+
+.m3-transition {
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.m3-input {
+  background-color: transparent;
+  border: 1px solid #73777F;
+  border-radius: 4px;
+  padding: 12px 16px;
+  color: #1A1C1E;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.m3-input:focus {
+  outline: none;
+  border-color: #00629D;
+  box-shadow: inset 0 0 0 1px #00629D;
+}
+.m3-table-row {
+  border-bottom: 1px solid #DFE2E6;
+}
+
+/* SHOELACE (WEB AWESOME) TABS M3 STYLING */
+sl-tab-group::part(nav) {
+  border-bottom: 1px solid #DFE2E6;
+  padding: 0 1.5rem;
+  gap: 0.5rem;
+  background-color: #F8F9FC; /* surfaceContainerLow */
+  position: sticky;
+  top: 64px;
+  z-index: 20;
+}
+sl-tab-group::part(tabs) {
+  scrollbar-width: none;
+}
+sl-tab-group::part(active-tab-indicator) {
+  display: none; /* Hide default indicator in favor of custom border */
+}
+sl-tab::part(base) {
+  padding: 0.75rem 1.25rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #43474E; /* onSurfaceVariant */
+  border-radius: 12px 12px 0 0;
+  background: transparent;
+  border: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+sl-tab::part(base):hover {
+  background-color: rgba(67, 71, 78, 0.08); /* hover state */
+}
+sl-tab[active]::part(base) {
+  color: #00629D;
+  background-color: #CFE5FF;
+  border-bottom: 2px solid #00629D;
+}
+sl-tab-panel::part(base) {
+  padding: 0;
+}
+
+/* Dashed Feature Grid GridPattern */
+.feature-grid-bg {
+  mask-image: radial-gradient(farthest-side at top, white, transparent);
+  -webkit-mask-image: radial-gradient(farthest-side at top, white, transparent);
+}
