@@ -1,0 +1,10 @@
+/* FinSys VA — footer (all views, all breakpoints) */
+.app-footer { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.footer-link {
+  background: none; border: 0; padding: 4px 0; font: inherit; color: #43474E;
+  text-align: left; cursor: pointer; transition: color .2s;
+}
+.footer-link:hover { color: #00629D; text-decoration: underline; text-underline-offset: 4px; }
+.footer-link:focus-visible { outline: 2px solid #00629D; outline-offset: 3px; border-radius: 4px; }
+/* comfortable tap targets on touch screens */
+@media (pointer: coarse) { .footer-link { padding: 8px 0; } }
