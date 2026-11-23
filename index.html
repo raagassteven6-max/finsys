@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B1F3B">
+  <meta name="description" content="FinSys VA — Reconcile, Resolve, Verify. Enterprise financial reconciliation system.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <title>FinSys VA — Enterprise Financial System & Reconciler (M3)</title>
   
   <!-- Tailwind CSS CDN -->
@@ -22,8 +28,9 @@
   <!-- Project styles -->
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/files.css">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
-<body class="h-full flex flex-col font-sans antialiased overflow-x-hidden text-m3-onSurface">
+<body class="min-h-screen flex flex-col font-sans antialiased overflow-x-hidden text-m3-onSurface">
 
   <!-- TOP HEADER -->
   <header class="bg-m3-surfaceContainer shadow-sm sticky top-0 z-30">
@@ -37,13 +44,7 @@
 
         <!-- BRANDING -->
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-m3-primaryContainer rounded-xl items-center justify-center hidden sm:flex">
-            <svg class="w-6 h-6" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 12C10 10.8954 10.8954 10 12 10H28C29.1046 10 30 10.8954 30 12V28C30 29.1046 29.1046 30 28 30H12C10.8954 30 10 29.1046 10 28V12Z" fill="#CFE5FF"/>
-              <path d="M14 14H26V18H18V21H24V25H18V28H14V14Z" fill="#00629D"/>
-              <circle cx="26" cy="26" r="4" fill="#001D34"/>
-            </svg>
-          </div>
+          <img src="assets/icon-app.svg" alt="FinSys VA logo" width="40" height="40" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl shadow-sm shrink-0">
           <h1 class="text-xl font-medium tracking-tight text-m3-onSurface flex items-center gap-2">
             FinSys <span class="font-bold text-m3-primary">VA</span>
           </h1>
@@ -170,7 +171,7 @@
   </aside>
 
   <!-- MAIN TABBED WORKSPACE WRAPPER -->
-  <main class="flex-1 w-full mx-auto max-w-screen-2xl flex flex-col relative h-full">
+  <main class="flex-1 w-full mx-auto max-w-screen-2xl flex flex-col relative min-w-0">
     
     <sl-tab-group id="main-tab-group" class="w-full h-full flex flex-col">
       
@@ -609,6 +610,58 @@
     </sl-tab-group>
   </main>
 
+  <!-- FOOTER (all views) -->
+  <footer id="app-footer" class="app-footer mt-auto w-full bg-m3-surfaceContainer border-t-2 border-m3-primary/20">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
+        <div class="sm:col-span-2 lg:col-span-6 space-y-4">
+          <div class="flex items-center gap-3">
+            <img src="assets/icon-app.svg" alt="" width="48" height="48" class="w-12 h-12 rounded-xl shadow-sm">
+            <div>
+              <div class="text-lg font-medium text-m3-onSurface leading-tight">FinSys <span class="font-bold text-m3-primary">VA</span></div>
+              <div class="text-[11px] tracking-[0.2em] uppercase text-m3-onSurfaceVariant">Reconcile • Resolve • Verify</div>
+            </div>
+          </div>
+          <p class="text-sm text-m3-onSurfaceVariant leading-relaxed max-w-md">Enterprise financial reconciliation built on exact integer-cents math. Match ledgers, resolve entities, catch duplicates and solve discrepancies with full audit control.</p>
+        </div>
+        <nav aria-label="Engines" class="lg:col-span-3">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-m3-primary mb-3">Engines</h2>
+          <ul class="space-y-2 text-sm"><li><button type="button" data-nav="overview" class="footer-link">Dashboard Overview</button></li><li><button type="button" data-nav="matcher" class="footer-link">Reconciliation Matcher</button></li><li><button type="button" data-nav="resolver" class="footer-link">Entity Resolver</button></li><li><button type="button" data-nav="duplicates" class="footer-link">Duplicate Inspector</button></li><li><button type="button" data-nav="gapfinder" class="footer-link">Discrepancy Solver</button></li><li><button type="button" data-nav="files" class="footer-link">File Manager</button></li></ul>
+        </nav>
+        <nav aria-label="Legal" class="lg:col-span-3">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-m3-primary mb-3">Legal</h2>
+          <ul class="space-y-2 text-sm"><li><button type="button" data-legal="terms" class="footer-link">Terms of Use</button></li><li><button type="button" data-legal="privacy" class="footer-link">Privacy Policy</button></li><li><button type="button" data-legal="disclaimer" class="footer-link">Disclaimer</button></li><li><button type="button" data-legal="cookies" class="footer-link">Cookie Notice</button></li></ul>
+        </nav>
+      </div>
+      <div class="mt-8 pt-5 border-t border-m3-outline/30 flex flex-col-reverse md:flex-row md:items-center md:justify-between gap-4 text-xs text-m3-onSurfaceVariant">
+        <div class="flex items-center gap-2 justify-center md:justify-start text-center md:text-left">
+          <img src="assets/favicon.svg" alt="" width="20" height="20" class="w-5 h-5 rounded shrink-0">
+          <span>&copy;2026 Steven Edward R. <span class="hidden sm:inline">|</span> <span class="block sm:inline">All rights reserved.</span></span>
+        </div>
+        <ul class="flex flex-wrap items-center justify-center md:justify-end gap-x-5 gap-y-2">
+          <li><button type="button" data-legal="terms" class="footer-link">Terms</button></li>
+          <li><button type="button" data-legal="privacy" class="footer-link">Privacy</button></li>
+          <li><button type="button" data-legal="disclaimer" class="footer-link">Disclaimer</button></li>
+          <li class="font-mono text-[11px] bg-m3-surfaceContainerHighest px-2 py-0.5 rounded-full">v M3</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- LEGAL MODAL -->
+  <div id="legal-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 m3-transition" role="dialog" aria-modal="true" aria-labelledby="legal-title">
+    <div class="bg-m3-surface rounded-3xl max-w-2xl w-full p-6 shadow-m3-3 relative max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-m3-surfaceVariant pb-4 mb-4 shrink-0">
+        <h3 id="legal-title" class="text-xl font-medium text-m3-onSurface"></h3>
+        <button onclick="closeModal('legal-modal')" class="p-2 rounded-full text-m3-onSurfaceVariant hover:bg-m3-onSurfaceVariant/10 m3-transition cursor-pointer" aria-label="Close">✕</button>
+      </div>
+      <div id="legal-body" class="overflow-y-auto custom-scrollbar text-sm text-m3-onSurfaceVariant leading-relaxed space-y-3 pr-1"></div>
+      <div class="flex justify-end mt-6 shrink-0">
+        <button onclick="closeModal('legal-modal')" class="bg-m3-primary hover:bg-m3-primary/90 text-m3-onPrimary px-6 py-2.5 rounded-full text-sm font-medium cursor-pointer m3-transition shadow-sm">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODALS -->
   <div id="upload-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 m3-transition">
     <div class="bg-m3-surface rounded-3xl max-w-xl w-full p-6 shadow-m3-3 relative">
@@ -651,6 +704,7 @@
   <script src="js/ui.js"></script>
   <script src="js/engines.js"></script>
   <script src="js/files.js"></script>
+  <script src="js/footer.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
